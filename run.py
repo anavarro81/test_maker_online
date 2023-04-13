@@ -5,11 +5,18 @@ from config import config
 app = Flask(__name__)
 
 preguntas = [
+    'SOF',
     '¿Cuál es la capital de Francia?',
     '¿Cuál es la capital de España?',
     '¿Cuál es la capital de Portugal?',
-    '¿Cuá es la capital de Alemania?'
+    '¿Cuá es la capital de Alemania?',
     ]
+
+tot_preg = len(preguntas) - 1
+
+print (f'Total preguntas = {tot_preg}')
+
+
 
 # Diccionario para habilitar o desabilizar los botones de paginación
 habilitado = {'prev': "", 
@@ -17,18 +24,12 @@ habilitado = {'prev': "",
 
 def estado_nav(page):
 
-    print ('== estado_nav ')
-    print (f'page = {page}')
-    
-    if page == 0:
-        habilitado['prev'] = "disabled"
-        habilitado['next'] = ""
-    elif page == len(preguntas):
-        habilitado['prev'] = ""
-        habilitado['next'] = "disabled"
+    if page == 1:
+       habilitado['prev'] = 'disabled'
+       habilitado['next'] = ''
     else:
-        habilitado['prev'] = ""
-        habilitado['next'] = ""
+        habilitado['prev'] = ''
+        habilitado['next'] = ''
     
     return habilitado
 
@@ -40,38 +41,22 @@ def index():
 @app.route('/siguiente', methods=['GET', 'POST'])
 def siguiente():
 
-
-
     page = int (request.args.get('page')) 
-
     habilitado = estado_nav(page)
-    
-    if page < len(preguntas):   
-        pregunta = preguntas[page]
-        page += 1
+
+    if page <= tot_preg:
+        pregunta = preguntas[page]        
     else: 
-        pregunta = 'No hay mas preguntas'
+        return render_template('final_test.html')
 
     return render_template('siguiente.html', pregunta=pregunta, page=page, habilitado=habilitado)
     
 @app.route('/anterior', methods=['GET', 'POST'])
 def anterior():
 
-    page = int (request.args.get('page'))
-
-    print (f'anterior | page (antes)= {page}')
-
-    habilitado = estado_nav(page)    
-
-    if page > 0:
-        page -= 1
-        pregunta = preguntas[page]        
-    else: 
-        pregunta = 'Esta en la primera pregunta'
-
+    page = int (request.args.get('page'))       
+    pregunta = preguntas[page]
     habilitado = estado_nav(page)
-
-    print (f'anterior | page (despues)= {page}') 
 
     return render_template('siguiente.html', pregunta=pregunta, page=page, habilitado=habilitado)
 

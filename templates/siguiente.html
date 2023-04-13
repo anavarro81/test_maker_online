@@ -16,9 +16,12 @@
         <div>
                 <p> {{ pregunta }} </p>
                 <p> Estoy en la pagina: {{page}} </p>
+                
                 <input type="hidden" id="page" name="page" value="{{page}}">
-                <a href=anterior?page={{page}}> <button {{habilitado['prev']}}> Anterior </button> </a>    
-                <a href=siguiente?page={{page}}> <button {{habilitado['next']}}> Siguiente </button> </a>
+                
+                
+                <a href=anterior?page={{page-1}}> <button  {{habilitado['prev']}}> Anterior </button> </a>    
+                <a href=siguiente?page={{page+1}}> <button {{habilitado['next']}}> Siguiente </button> </a>
                 
         </div>
     </div>
