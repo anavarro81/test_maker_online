@@ -11,20 +11,33 @@
 </head>
 <body class="text-center">
     
-    <div>
+    <form action="/siguiente" method="POST">
 
         <div>
                 <p> {{ pregunta }} </p>
+                
+                <div> 
+
+                    {# Muestra las opciones de respuesta de cada pregunta #}  
+                    
+                    {% for opc in dict_opciones %}
+                        <input type="radio" id="{{dict_opciones}}" name="opcion" value="{{opc}}">
+                        <label for="name">{{dict_opciones[opc]}}</label><br>
+                    
+                    {% endfor %}
+                </div>
+
                 <p> Estoy en la pagina: {{page}} </p>
                 
                 <input type="hidden" id="page" name="page" value="{{page}}">
-                
-                
-                <a href=anterior?page={{page-1}}> <button  {{habilitado['prev']}}> Anterior </button> </a>    
-                <a href=siguiente?page={{page+1}}> <button {{habilitado['next']}}> Siguiente </button> </a>
+                <br>
+
+                <input type="submit" name="anterior" value="anterior" {{habilitado['prev']}}>
+                <input type="submit" name="siguiente" value="siguiente" {{habilitado['next']}}>    
+
                 
         </div>
-    </div>
+    </form>
     
 </body>
 </html

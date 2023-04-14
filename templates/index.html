@@ -10,10 +10,12 @@
 
 </head>
 <body class="text-center">
-    
-    <div>
-        <a href=siguiente?page=1>   <button> Empezar el Test </button> </a>   
-    </div>
+    <form action="/siguiente" id="form" method="post">
+        <div>            
+            <input type="hidden" id="page" name="page" value=0>
+            <button type="submit"  name='start_game' value="star_game"> Empezar el Test </button>
+        </div>
+    </form>
     
 </body>
 </html
