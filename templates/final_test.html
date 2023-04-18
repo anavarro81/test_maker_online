@@ -12,6 +12,21 @@
 <body class="text-center">
     
     <h2> Has completado el test </h2>
+
+    
+    {% for pregunta in preguntas: %}
+
+        <h2> {{ pregunta }} </h2>   
+        {% for opc in opciones[loop.index0]%}
+            <p> {{ opc }} </p>
+            
+        {% endfor %}        
+        <hr class="dotted">
+    {% endfor %}
+    
+
+
+
     
 </body>
 </html

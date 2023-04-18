@@ -4,8 +4,7 @@ from config import config
 
 app = Flask(__name__)
 
-preguntas = [
-    'SOF',
+preguntas = [    
     '¿Cuál es la capital de Francia?',
     '¿Cuál es la capital de España?',
     '¿Cuál es la capital de Portugal?',
@@ -13,10 +12,10 @@ preguntas = [
     ]
 
 opciones = [
-    ['Madrid', 'Lisboa', 'París', 'Berlín'],
-    ['Madrid', 'Lisboa', 'París', 'Berlín'],
-    ['Madrid', 'Lisboa', 'París', 'Berlín'],
-    ['Madrid', 'Lisboa', 'París', 'Berlín'],
+    ['1Madrid', 'Lisboa', 'París', 'Berlín'],
+    ['2Madrid', 'Lisboa', 'París', 'Berlín'],
+    ['3Madrid', 'Lisboa', 'París', 'Berlín'],
+    ['4Madrid', 'Lisboa', 'París', 'Berlín'],
 ]
 
 respuestas = [
@@ -28,7 +27,7 @@ user_aswer = []
 key_values = ['a', 'b', 'c', 'd']
 
 
-tot_preg = len(preguntas) - 1
+tot_preg = len(preguntas)
 
 print (f'Total preguntas = {tot_preg}')
 
@@ -82,10 +81,10 @@ def siguiente():
         
         
         if page <= tot_preg:
-            pregunta = preguntas[page]
+            pregunta = preguntas[page-1]
             dict_opciones = dict(zip(key_values, opciones[page-1]))         
         else: 
-            return render_template('final_test.html')
+            return render_template('final_test.html', preguntas=preguntas, opciones=opciones, n_pregunta=0)
 
         
 
