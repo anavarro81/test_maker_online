@@ -1,26 +1,17 @@
 from flask import Flask, render_template, request
+import random
+import sqlite3
 
 from config import config
 
 app = Flask(__name__)
 
-preguntas = [    
-    '¿Cuál es la capital de Francia?',
-    '¿Cuál es la capital de España?',
-    '¿Cuál es la capital de Portugal?',
-    '¿Cuá es la capital de Alemania?',
-    ]
 
-opciones = [
-    ['1Madrid', 'Lisboa', 'París', 'Berlín'],
-    ['2Madrid', 'Lisboa', 'París', 'Berlín'],
-    ['3Madrid', 'Lisboa', 'París', 'Berlín'],
-    ['4Madrid', 'Lisboa', 'París', 'Berlín'],
-]
+# Guarda las preguntas y opcione de la base de datos
+preguntas = []
+opciones = []
+respuestas = []
 
-respuestas = [
-    ['c', 'a', 'b', 'd']
-]
 
 user_aswer = []
 
@@ -31,15 +22,12 @@ tot_preg = len(preguntas)
 
 print (f'Total preguntas = {tot_preg}')
 
-
-
 # Diccionario para habilitar o desabilizar los botones de paginación
 habilitado = {'prev': "", 
               'next': ""}
 
-def estado_nav(page):
 
-    print ('->estado_nav | page = {p} ')
+def estado_nav(page):  
 
     if page == 1:
        habilitado['prev'] = 'disabled'
@@ -50,9 +38,38 @@ def estado_nav(page):
     
     return habilitado
 
+def generar_num_aleatorio():
+    return random.sample(range(10), 5)
+    
+
+def obtener_preguntas_bbdd(mums_pregs):
+    #Conectamos con la base de datos. 
+    connection = sqlite3.connect('preguntas.db')
+
+    #create cursor to manage bd
+    cursor = connection.cursor()
+
+    #  Base de datos de preguntas. 
+    cursor.execute("select * from preguntas where num_preg in (5, 8, 3)")   
+
+
+    preguntas_all = cursor.fetchall()
+
+    connection.close()
+
+    return preguntas_all
+
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+
+   mums_pregs = generar_num_aleatorio()
+   
+   preguntas_bbdd = obtener_preguntas_bbdd(mums_pregs)
+
+   print (preguntas_bbdd)
+
+   return render_template('index.html')
 
 
 @app.route('/siguiente', methods=['GET', 'POST'])
