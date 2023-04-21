@@ -105,12 +105,13 @@ form h3 {
     border: none;
     color: #fff;
     font-size: 18px;
-    
-/*
-    
+}   
 
+
+.rspta_correcta {
+    background-color: #7CFC00;
 }
 
-.shape-divider-bottom .shape-fill {
-    fill: #7a5a5a;
+.rspta_ko {
+    background-color: #CD5C5C;
 }

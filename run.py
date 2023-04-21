@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import random
 import sqlite3
 
@@ -9,6 +9,13 @@ app = Flask(__name__)
 
 # Guarda las preguntas y opcione de la base de datos
 preguntas = []
+# opciones = [ 
+# ['Madrid', 'Barcelona', 'Lisboa', 'Berlin'],
+# ['Madrid', 'Barcelona', 'Lisboa', 'Berlin'],
+# ['Madrid', 'Barcelona', 'Lisboa', 'Berlin'],
+# ['Madrid', 'Barcelona', 'Lisboa', 'Berlin'],
+# ['Madrid', 'Barcelona', 'Lisboa', 'Berlin']
+# ]
 opciones = []
 respuestas = []
 
@@ -16,11 +23,7 @@ respuestas = []
 user_aswer = []
 
 key_values = ['a', 'b', 'c', 'd']
-
-
-tot_preg = len(preguntas)
-
-print (f'Total preguntas = {tot_preg}')
+tot_preg = 5
 
 # Diccionario para habilitar o desabilizar los botones de paginación
 habilitado = {'prev': "", 
@@ -39,7 +42,7 @@ def estado_nav(page):
     return habilitado
 
 def generar_num_aleatorio():
-    return random.sample(range(10), 5)
+    return random.sample(range(1,11), 5)
     
 
 def obtener_preguntas_bbdd(mums_pregs):
@@ -50,24 +53,26 @@ def obtener_preguntas_bbdd(mums_pregs):
     cursor = connection.cursor()
 
     #  Base de datos de preguntas. 
-    cursor.execute("select * from preguntas where num_preg in (5, 8, 3)")   
+    #  Selecciono por num_pregu (num= 1...) las generadas aleatoriamente. 
+    cursor.execute("select * from preguntas where num_preg in (?, ?, ?, ?, ?)", (mums_pregs))  
+    
+    selec_prgts = cursor.fetchall()
 
+    for pregunta in selec_prgts:
 
-    preguntas_all = cursor.fetchall()
+        #-> Agrego la pregunta de la BBDD a la lista de trabajo.
+        preguntas.append(pregunta[1])       
+        opciones.append(pregunta[2].split(';'))
+        respuestas.append(pregunta[3].split(';'))
 
     connection.close()
-
-    return preguntas_all
-
 
 @app.route('/')
 def index():
 
    mums_pregs = generar_num_aleatorio()
-   
-   preguntas_bbdd = obtener_preguntas_bbdd(mums_pregs)
+   obtener_preguntas_bbdd(mums_pregs)
 
-   print (preguntas_bbdd)
 
    return render_template('index.html')
 
@@ -76,11 +81,7 @@ def index():
 def siguiente():
 
     if request.method == 'POST':        
-        page = int (request.form['page'])
-
-        
-
-        print (f'/siguiente | page = {page}')
+        page = int (request.form['page'])       
 
         # Si vengo de index (st)
         if 'start_game' in request.form or 'siguiente'  in request.form:
@@ -93,20 +94,39 @@ def siguiente():
         # Guardo la opción dada por el usuario: 
         if 'opcion' in request.form:
             opc = request.form['opcion']           
-            user_aswer.insert(page, opc)
-        
-        
-        
-        if page <= tot_preg:
+            user_aswer.insert(page, opc)       
+
+        if page <= tot_preg:            
             pregunta = preguntas[page-1]
             dict_opciones = dict(zip(key_values, opciones[page-1]))         
-        else: 
-            return render_template('final_test.html', preguntas=preguntas, opciones=opciones, n_pregunta=0)
-
+        else:                           
+            resultados_test = corregir_test()               
+            return render_template('final_test.html', preguntas=preguntas, opciones=opciones, respuesta=user_aswer)
+        
         
 
-    return render_template('siguiente.html', pregunta=pregunta, page=page, habilitado=habilitado, dict_opciones=dict_opciones)
+    return render_template('siguiente.html', pregunta=pregunta, page=page, habilitado=habilitado, dict_opciones=dict_opciones, tot_preg=tot_preg)
     
+def corregir_test():
+    
+    
+    idx_rspta = 0
+    score = 0
+    rsptas_st = {}
+
+    for respuesta in respuestas:        
+        if respuesta[0][0] == user_aswer[idx_rspta][0]:
+            score += 1
+            rsptas_st[idx_rspta] = True
+        else:
+            rsptas_st[idx_rspta] = False
+
+        idx_rspta += 1
+
+    print (f'Diccionario respuestas = {rsptas_st}')
+
+
+    return render_template('final_test.html', preguntas=preguntas, opciones=opciones, rsptas_st=rsptas_st)
 
 if __name__ == '__main__':
     app.config.from_object(config['development'])
