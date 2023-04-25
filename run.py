@@ -99,13 +99,14 @@ def siguiente():
             dict_opciones = dict(zip(key_values, opciones[page - 1]))
         else:
             
-            rsptas_st = corregir_test()
+            rsptas_st, score = corregir_test()
             return render_template(
                 "final_test.html",
                 preguntas=preguntas,
                 opciones=opciones,
                 rsptas_st=rsptas_st,
-                user_aswer=user_aswer,
+                user_aswer=user_aswer, score=score,
+                respuestas=respuestas
             )
 
     return render_template(
@@ -126,14 +127,14 @@ def corregir_test():
     for respuesta in respuestas:
         if respuesta[0][0] == user_aswer[idx_rspta][0]:
             score += 1
-            rsptas_st[idx_rspta] = 1
+            rsptas_st[idx_rspta] = True
         else:
-            rsptas_st[idx_rspta] = 0
+            rsptas_st[idx_rspta] = False
 
         idx_rspta += 1
 
     
-    return rsptas_st
+    return rsptas_st, score
 
 
 if __name__ == "__main__":

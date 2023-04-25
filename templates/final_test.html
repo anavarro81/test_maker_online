@@ -13,7 +13,7 @@
     
     <h2> Resultados del TEST </h2>
 
-   <p> Hay un total de: {{preguntas|length }} preguntas  </p>
+   <p> Has respondido correctamente a <b> {{score}} </b> de {{preguntas|length}} preguntas</p>
 
    {% for pregunta in range(0, preguntas|length) %}
 
@@ -22,7 +22,7 @@
         {% for opcion in opciones[pregunta] %}
             {% if opcion[0] == user_aswer[pregunta][0] %}
                 
-                {% if rsptas_st[pregunta] == 1 %}
+                {% if rsptas_st[pregunta] %}
                     <p> <span class="rspta_OK"> {{ opcion }} </span> </p>  
                 {% else %}
                     <p> <span class="rspta_KO"> {{ opcion }} </span> </p>
@@ -32,6 +32,11 @@
                 <p> {{ opcion }} </p>
             {% endif %}            
         {% endfor %}
+
+        {% if not rsptas_st[pregunta]  %}
+        La respuesta correcta es: <b> {{ respuestas[pregunta]|join(' ') }} </b>       
+        {% endif %}
+
                
     <hr class="dotted">
    {% endfor %}
