@@ -32,6 +32,11 @@ form {
 form input[type="submit"] {
     align-self: end;
 }
+form label {
+    text-align: left;
+    margin-left: 10px;
+    display: inline;
+}
 
 form>div:first-child {
     width: 100%;
@@ -146,18 +151,20 @@ form h3 {
 }
 
 
-.rspta_correcta {
+.rspta_OK {
     background-color: #7CFC0077;
     border: 1px solid #7CFC00;
     padding: 5px 10px;
     border-radius: 5px;
+    margin-left: -10px;
 }
 
-.rspta_ko {
+.rspta_KO {
     border: 1px solid #CD5C5C;
     padding: 5px 10px;
     border-radius: 5px;
     background-color: #CD5C5C77;
+    margin-left: -10px;
 }
 
 .resultados {
@@ -178,6 +185,13 @@ form h3 {
 
 .resultados p {
     margin-left: 30px;
+}
+
+.resultados p:first-of-type {
+    text-align: center;
+    margin-left: 0;
+    display: block;
+    width: 100%;
 }
 
 .titulo-resultados {

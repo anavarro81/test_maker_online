@@ -12,18 +12,34 @@
 
 </head>
 
+
 <body>
 
     <h2 class="titulo-resultados"> Resultados del TEST </h2>
 
+    
+    
+    
     <div class="resultados">
-        {% for pregunta in preguntas: %}
-
-        <h2> {{ pregunta }} </h2>
-        {% for opc in opciones[loop.index0]%}
-        <p> <span class="rspta_ko"> {{ opc }} </span> </p>
-
+        <p> Hay un total de: {{preguntas|length }} preguntas  </p>
+        {% for pregunta in range(0, preguntas|length) %}
+        
+        <h3> {{ preguntas[pregunta] }} </h3>
+        
+        {% for opcion in opciones[pregunta] %}
+        {% if opcion[0] == user_aswer[pregunta][0] %}
+        
+        {% if rsptas_st[pregunta] == 1 %}
+        <p> <span class="rspta_OK"> {{ opcion }} </span> </p>
+        {% else %}
+        <p> <span class="rspta_KO"> {{ opcion }} </span> </p>
+        {% endif %}
+        
+        {% else %}
+        <p> {{ opcion }} </p>
+        {% endif %}
         {% endfor %}
+        
         <hr class="dotted">
         {% endfor %}
     </div>
