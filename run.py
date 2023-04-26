@@ -98,15 +98,15 @@ def siguiente():
             pregunta = preguntas[page - 1]
             dict_opciones = dict(zip(key_values, opciones[page - 1]))
         else:
-            
             rsptas_st, score = corregir_test()
             return render_template(
                 "final_test.html",
                 preguntas=preguntas,
                 opciones=opciones,
                 rsptas_st=rsptas_st,
-                user_aswer=user_aswer, score=score,
-                respuestas=respuestas
+                user_aswer=user_aswer,
+                score=score,
+                respuestas=respuestas,
             )
 
     return render_template(
@@ -133,7 +133,6 @@ def corregir_test():
 
         idx_rspta += 1
 
-    
     return rsptas_st, score
 
 
