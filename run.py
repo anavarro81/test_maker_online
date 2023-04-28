@@ -1,21 +1,15 @@
 from flask import Flask, render_template, request, redirect
 import random
-import sqlite3
+from flask_mysqldb import MySQL
 
 from config import config
 
 app = Flask(__name__)
+db = MySQL(app)
 
 
 # Guarda las preguntas y opcione de la base de datos
 preguntas = []
-# opciones = [
-# ['Madrid', 'Barcelona', 'Lisboa', 'Berlin'],
-# ['Madrid', 'Barcelona', 'Lisboa', 'Berlin'],
-# ['Madrid', 'Barcelona', 'Lisboa', 'Berlin'],
-# ['Madrid', 'Barcelona', 'Lisboa', 'Berlin'],
-# ['Madrid', 'Barcelona', 'Lisboa', 'Berlin']
-# ]
 opciones = []
 respuestas = []
 
@@ -44,28 +38,29 @@ def generar_num_aleatorio():
     return random.sample(range(1, 11), 5)
 
 
-def obtener_preguntas_bbdd(mums_pregs):
+def obtener_preguntas_bbdd(mums_pregs):   
+    
+    
     # Conectamos con la base de datos.
-    connection = sqlite3.connect("preguntas.db")
+    cursor = db.connection.cursor()
 
-    # create cursor to manage bd
-    cursor = connection.cursor()
+    # selec_preguntas = """select * from preguntas where num_preg in {}""".format(mums_pregs)
 
-    #  Base de datos de preguntas.
-    #  Selecciono por num_pregu (num= 1...) las generadas aleatoriamente.
     cursor.execute(
-        "select * from preguntas where num_preg in (?, ?, ?, ?, ?)", (mums_pregs)
+        "select * from preguntas where num_pregunta in (%s, %s, %s, %s, %s )", (mums_pregs)
     )
-
+    
+    # Leemos la información de las preguntas seleccionadas
     selec_prgts = cursor.fetchall()
-
+    
     for pregunta in selec_prgts:
-        # -> Agrego la pregunta de la BBDD a la lista de trabajo.
-        preguntas.append(pregunta[1])
-        opciones.append(pregunta[2].split(";"))
-        respuestas.append(pregunta[3].split(";"))
+    # -> Agrego la pregunta de la BBDD a la lista de trabajo.
+         preguntas.append(pregunta[1])
+         opciones.append(pregunta[2].split(";"))
+         respuestas.append(pregunta[3].split(";"))
 
-    connection.close()
+# Cierra el cursor
+    cursor.close()
 
 
 @app.route("/")
@@ -123,8 +118,12 @@ def corregir_test():
     idx_rspta = 0
     score = 0
     rsptas_st = {}
+    
 
     for respuesta in respuestas:
+        
+        
+        
         if respuesta[0][0] == user_aswer[idx_rspta][0]:
             score += 1
             rsptas_st[idx_rspta] = True
