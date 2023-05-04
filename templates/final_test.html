@@ -13,35 +13,36 @@
 </head>
 
 
+
 <body>
+
+    <p> Has respondido correctamente a <b> {{score}} </b> de {{preguntas|length}} preguntas</p>
 
     <h2 class="titulo-resultados"> Resultados del TEST </h2>
 
-    
-    
-    
-    <div class="resultados">
-        <p> Hay un total de: {{preguntas|length }} preguntas  </p>
-        {% for pregunta in range(0, preguntas|length) %}
-        
-        <h3> {{ preguntas[pregunta] }} </h3>
-        
-        {% for opcion in opciones[pregunta] %}
-        {% if opcion[0] == user_aswer[pregunta][0] %}
-        
-        {% if rsptas_st[pregunta] == 1 %}
-        <p> <span class="rspta_OK"> {{ opcion }} </span> </p>
-        {% else %}
-        <p> <span class="rspta_KO"> {{ opcion }} </span> </p>
-        {% endif %}
-        
-        {% else %}
-        <p> {{ opcion }} </p>
-        {% endif %}
-        {% endfor %}
-        
-        <hr class="dotted">
-        {% endfor %}
+    <h3> {{ preguntas[pregunta] }} </h3>
+
+    {% for opcion in opciones[pregunta] %}
+    {% if opcion[0] == user_aswer[pregunta][0] %}
+
+    {% if rsptas_st[pregunta] %}
+    <p> <span class="rspta_OK"> {{ opcion }} </span> </p>
+    {% else %}
+    <p> <span class="rspta_KO"> {{ opcion }} </span> </p>
+    {% endif %}
+
+    {% else %}
+    <p> {{ opcion }} </p>
+    {% endif %}
+    {% endfor %}
+
+    {% if not rsptas_st[pregunta] %}
+    La respuesta correcta es: <b> {{ respuestas[pregunta]|join(' ') }} </b>
+    {% endif %}
+
+
+    <hr class="dotted">
+    {% endfor %}
     </div>
 
     <a href="/" class="volver btn">Volver al inicio</a>
