@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv() 
 
 class Config:
     SECRET_KEY = "*W8Tr^g9UyM!sc8Uuuuc"
@@ -16,8 +19,7 @@ class DevelopmentConfig(Config):
     # # Parametros de conexion con la BBDD.
     MYSQL_HOST = os.environ.get('MYSQL_HOST')
     MYSQL_USER = os.environ.get('MYSQL_USER')
-    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD')    
-    # MYSQL_PASSWORD = ""
+    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD')
     MYSQL_DB = os.environ.get('MYSQL_DB')
 
 
