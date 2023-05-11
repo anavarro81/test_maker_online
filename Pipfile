@@ -8,6 +8,8 @@ black = "*"
 flask-mysql = "*"
 flask-mysqldb = "*"
 gunicorn = "*"
+flask = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
