@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     /* font-family: montserrat; */
-    font-family: Roboto, sans-serif; 
+    font-family: Roboto, sans-serif;
     min-height: 100vh;
     background-color: #d5eafc;
 }
@@ -14,6 +14,38 @@ body {
     padding: 20px;
 }
 
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    flex-grow: 1;
+    background-color: #7a5a5a75;
+    width: 90%;
+    max-width: 500px;
+    padding: 20px 40px;
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+form input[type="submit"] {
+    align-self: end;
+}
+form label {
+    text-align: left;
+    margin-left: 10px;
+    display: inline;
+}
+
+form>div:first-child {
+    width: 100%;
+}
+
+form h3 {
+    text-align: left;
+    margin-bottom: 20px;
+}
 
 form {
     display: flex;
@@ -21,7 +53,7 @@ form {
     align-items: center;
     justify-content: center;
     margin-top: 20px;
-    flex-grow: 1;    
+    flex-grow: 1;
     background-color: #fafafe;
     width: 90%;
     max-width: 500px;
@@ -80,6 +112,17 @@ form h3 {
     fill: #7a5a5a;
 }
 
+.shape-divider-top svg {
+    position: relative;
+    display: block;
+    width: calc(113% + 1.3px);
+    height: 117px;
+}
+
+.shape-divider-top .shape-fill {
+    fill: #7a5a5a;
+}
+
 
 /* Shape Divider Bottom */
 .shape-divider-bottom {
@@ -99,18 +142,67 @@ form h3 {
     height: 117px;
 }
 
-.btn {
+.btn, button{
     background-color: red;
     border-radius: 4px;
     border: none;
     color: #fff;
     font-size: 18px;
-    
-/*
-    
-
 }
 
-.shape-divider-bottom .shape-fill {
-    fill: #7a5a5a;
+
+.rspta_OK {
+    background-color: #7CFC0077;
+    border: 1px solid #7CFC00;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-left: -10px;
+}
+
+.rspta_KO {
+    border: 1px solid #CD5C5C;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #CD5C5C77;
+    margin-left: -10px;
+}
+
+.resultados {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+    margin-top: 20px;
+    flex-grow: 1;
+    background-color: #fafafe;
+    width: 90%;
+    max-width: 900px;
+    padding: 20px 40px;
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    margin: 20px auto;
+}
+
+.resultados p {
+    margin-left: 30px;
+}
+
+.resultados p:first-of-type {
+    text-align: center;
+    margin-left: 0;
+    display: block;
+    width: 100%;
+}
+
+.titulo-resultados {
+    text-align: center;
+    margin: 40px 20px;
+}
+
+.volver {
+    margin: 20px auto;
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    justify-content: center;
 }
