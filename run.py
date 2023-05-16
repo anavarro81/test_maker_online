@@ -1,96 +1,144 @@
-from flask import Flask, render_template, request
+# ---------------------------------------------------------- # 
+# 1. Iniciar Xammp  - MySQL
+# ---------------------------------------------------------- # 
+
+from flask import Flask, render_template, request, redirect
+import random
+from flask_mysqldb import MySQL
 
 from config import config
 
 app = Flask(__name__)
+db = MySQL(app)
 
-preguntas = [    
-    '¿Cuál es la capital de Francia?',
-    '¿Cuál es la capital de España?',
-    '¿Cuál es la capital de Portugal?',
-    '¿Cuá es la capital de Alemania?',
-    ]
 
-opciones = [
-    ['1Madrid', 'Lisboa', 'París', 'Berlín'],
-    ['2Madrid', 'Lisboa', 'París', 'Berlín'],
-    ['3Madrid', 'Lisboa', 'París', 'Berlín'],
-    ['4Madrid', 'Lisboa', 'París', 'Berlín'],
-]
+# Guarda las preguntas y opcione de la base de datos
+preguntas = []
+opciones = []
+respuestas = []
 
-respuestas = [
-    ['c', 'a', 'b', 'd']
-]
 
 user_aswer = []
 
-key_values = ['a', 'b', 'c', 'd']
-
-
-tot_preg = len(preguntas)
-
-print (f'Total preguntas = {tot_preg}')
-
-
+key_values = ["a", "b", "c", "d"]
+tot_preg = 5
 
 # Diccionario para habilitar o desabilizar los botones de paginación
-habilitado = {'prev': "", 
-              'next': ""}
+habilitado = {"prev": "", "next": ""}
+
 
 def estado_nav(page):
-
-    print ('->estado_nav | page = {p} ')
-
     if page == 1:
-       habilitado['prev'] = 'disabled'
-       habilitado['next'] = ''
+        habilitado["prev"] = "disabled"
+        habilitado["next"] = ""
     else:
-        habilitado['prev'] = ''
-        habilitado['next'] = ''
-    
+        habilitado["prev"] = ""
+        habilitado["next"] = ""
+
     return habilitado
 
-@app.route('/')
+
+def generar_num_aleatorio():
+    return random.sample(range(1, 11), 5)
+
+
+def obtener_preguntas_bbdd(mums_pregs):   
+    
+    
+    # Conectamos con la base de datos.
+    cursor = db.connection.cursor()
+
+    # selec_preguntas = """select * from preguntas where num_preg in {}""".format(mums_pregs)
+
+    cursor.execute(
+        "select * from preguntas where num_pregunta in (%s, %s, %s, %s, %s )", (mums_pregs)
+    )
+    
+    # Leemos la información de las preguntas seleccionadas
+    selec_prgts = cursor.fetchall()
+    
+    for pregunta in selec_prgts:
+    # -> Agrego la pregunta de la BBDD a la lista de trabajo.
+         preguntas.append(pregunta[1])
+         opciones.append(pregunta[2].split(";"))
+         respuestas.append(pregunta[3].split(";"))
+
+# Cierra el cursor
+    cursor.close()
+
+
+@app.route("/")
 def index():
-    return render_template('index.html')
+    mums_pregs = generar_num_aleatorio()
+    obtener_preguntas_bbdd(mums_pregs)
+
+    return render_template("index.html")
 
 
-@app.route('/siguiente', methods=['GET', 'POST'])
+@app.route("/siguiente", methods=["GET", "POST"])
 def siguiente():
-
-    if request.method == 'POST':        
-        page = int (request.form['page'])
-
-        
-
-        print (f'/siguiente | page = {page}')
+    if request.method == "POST":
+        page = int(request.form["page"])
 
         # Si vengo de index (st)
-        if 'start_game' in request.form or 'siguiente'  in request.form:
-            page      = page + 1        
-        elif 'anterior' in request.form:            
+        if "start_game" in request.form or "siguiente" in request.form:
+            page = page + 1
+        elif "anterior" in request.form:
             page = page - 1
 
         habilitado = estado_nav(page)
 
-        # Guardo la opción dada por el usuario: 
-        if 'opcion' in request.form:
-            opc = request.form['opcion']           
+        # Guardo la opción dada por el usuario:
+        if "opcion" in request.form:
+            opc = request.form["opcion"]
             user_aswer.insert(page, opc)
-        
-        
-        
+
         if page <= tot_preg:
-            pregunta = preguntas[page-1]
-            dict_opciones = dict(zip(key_values, opciones[page-1]))         
-        else: 
-            return render_template('final_test.html', preguntas=preguntas, opciones=opciones, n_pregunta=0)
+            pregunta = preguntas[page - 1]
+            dict_opciones = dict(zip(key_values, opciones[page - 1]))
+        else:
+            rsptas_st, score = corregir_test()
+            return render_template(
+                "final_test.html",
+                preguntas=preguntas,
+                opciones=opciones,
+                rsptas_st=rsptas_st,
+                user_aswer=user_aswer,
+                score=score,
+                respuestas=respuestas,
+            )
 
-        
+    return render_template(
+        "siguiente.html",
+        pregunta=pregunta,
+        page=page,
+        habilitado=habilitado,
+        dict_opciones=dict_opciones,
+        tot_preg=tot_preg,
+    )
 
-    return render_template('siguiente.html', pregunta=pregunta, page=page, habilitado=habilitado, dict_opciones=dict_opciones)
+
+def corregir_test():
+    idx_rspta = 0
+    score = 0
+    rsptas_st = {}
     
 
-if __name__ == '__main__':
-    app.config.from_object(config['development'])
+    for respuesta in respuestas:
+        
+        
+        
+        if respuesta[0][0] == user_aswer[idx_rspta][0]:
+            score += 1
+            rsptas_st[idx_rspta] = True
+        else:
+            rsptas_st[idx_rspta] = False
+
+        idx_rspta += 1
+
+    return rsptas_st, score
+
+
+if __name__ == "__main__":
+    app.config.from_object(config["development"])
     app.run()
